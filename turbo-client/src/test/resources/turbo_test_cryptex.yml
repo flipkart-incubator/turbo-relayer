@@ -1,0 +1,31 @@
+mysql:
+    hibernate.c3p0.idle_test_period: "60000"
+    hibernate.c3p0.max_size: "100"
+    hibernate.c3p0.max_statements: "50"
+    hibernate.c3p0.min_size: "20"
+    hibernate.c3p0.timeout: "300"
+    hibernate.connection.driver_class: com.mysql.jdbc.Driver
+    hibernate.connection.password: "eyJkYXRhIjoidmF1bHQ6djE6UmVpeGZueSt6NWFnQWdtNjQrcGhLejBOTGtjcW1kRVp5SEFYdWZweGhscz0iLCJrZXlJZCI6ImNmZy1zdmM6OmluLWh5ZGVyYWJhZC0xLXByb2Q6dHItdGVzdCJ9" #root
+    hibernate.connection.url: "jdbc:mysql://dummy:3306/outbound"
+    hibernate.connection.username: root
+    hibernate.show_sql: "true"
+    hibernate.connection.zeroDateTimeBehavior: convertToNull
+
+authConfig:
+    authnUrl: "http://10.24.0.165"
+    clientId: "tr-client-test"
+    clientSecret: "VgDdAEffOvgtXEcweprsMkjtM8XH4ZZbAz2tW4JliAfqHKol"
+
+db_shards:
+  shard1:
+      hibernate.c3p0.idle_test_period: "60000"
+      hibernate.c3p0.max_size: "100"
+      hibernate.c3p0.max_statements: "50"
+      hibernate.c3p0.min_size: "5"
+      hibernate.c3p0.timeout: "300"
+      hibernate.connection.driver_class: com.mysql.jdbc.Driver
+      hibernate.connection.password: "eyJkYXRhIjoidmF1bHQ6djE6UmVpeGZueSt6NWFnQWdtNjQrcGhLejBOTGtjcW1kRVp5SEFYdWZweGhscz0iLCJrZXlJZCI6ImNmZy1zdmM6OmluLWh5ZGVyYWJhZC0xLXByb2Q6dHItdGVzdCJ9" #root
+      hibernate.connection.url: "jdbc:mysql://dummy:3344/outbound_shard1"
+      hibernate.connection.username: root
+      hibernate.show_sql: "true"
+      hibernate.connection.zeroDateTimeBehavior: convertToNull

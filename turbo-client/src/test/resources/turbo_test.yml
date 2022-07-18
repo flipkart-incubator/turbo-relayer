@@ -1,0 +1,66 @@
+singleDbWriteEnabled: false               # write in fksc relayer format
+multiDbWriteEnabled: true                 # write in turbo relayer format
+turboOutboundWithoutTrxEnabled: false     # only write to turbo outbound table
+sharding: true
+payloadLength: 50
+appDbType: "mysql"  #{supports two values [mysql, tds]}
+partitionConfiguration:  # redundant config to check load config
+    doPartition: true
+    size: "5000000"
+queue_shard_strategy:
+  default_suffix: queues
+  clusters:
+    topics:
+      - production\.fsd\.payment\.status
+
+    external:
+      - ekl_facilities_production
+
+    shipping:
+      - shipping_b2c_production
+      - ekl_fsd_shipping_production
+
+    internal:
+      - fsd_pos_reconciliation_production
+      - ekl_fsd_pos_reconciliation_production
+      - ekl_fsd_pos_reco_production
+      - ekl_fsd_pinelabs_production
+      - ekl_fsd_mobpine_production
+
+    test_topic:
+      - test_topic_pattern
+
+    comm:
+      - fsd_communication_queue_production
+      - ekl_communication_production
+
+# Note : Turbo Client doesn't depend on any specific provider(c3p0) and will compile successfully even if you exclude the provider dependency.
+# Make sure you are configuring your provider properly in case you are overriding the default provider.
+mysql:
+    hibernate.c3p0.idle_test_period: "60000"
+    hibernate.c3p0.max_size: "100"
+    hibernate.c3p0.max_statements: "50"
+    hibernate.c3p0.min_size: "20"
+    hibernate.c3p0.timeout: "300"
+    hibernate.connection.driver_class: com.mysql.jdbc.Driver
+    hibernate.connection.password: ""
+    hibernate.connection.password: "test"
+    hibernate.connection.url: "jdbc:mysql://localhost:3344/outbound"
+    hibernate.connection.username: test
+    hibernate.show_sql: "true"
+    hibernate.connection.zeroDateTimeBehavior: convertToNull
+    slave_hostname: localhost
+
+db_shards:
+  shard1:
+      hibernate.c3p0.idle_test_period: "60000"
+      hibernate.c3p0.max_size: "100"
+      hibernate.c3p0.max_statements: "50"
+      hibernate.c3p0.min_size: "5"
+      hibernate.c3p0.timeout: "300"
+      hibernate.connection.driver_class: com.mysql.jdbc.Driver
+      hibernate.connection.password: "test"
+      hibernate.connection.url: "jdbc:mysql://localhost:3344/outbound_shard1"
+      hibernate.connection.username: test
+      hibernate.show_sql: "true"
+      hibernate.connection.zeroDateTimeBehavior: convertToNull

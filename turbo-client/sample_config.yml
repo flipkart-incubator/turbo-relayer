@@ -1,0 +1,75 @@
+######################################################
+#
+# singleDbWriteEnabled allows you write in old fksc format where it will write to only one table
+# multiDbWriteEnabled writes to two separate tables app: <shard>_meta_data and turbo outbound: namely <shard>_messages tables
+#
+# Migration:
+# 1. If you want to migrate from fksc to turbo, enable singleDbWriteEnabled and multiDbWriteEnabled after integrating the client.
+# 2. This will write in both formats one exiting as per fksc and the other is multiDb writes which is required by turbo.
+# 3. Once you have done the sanity checking that the writes are proper.
+#     You can start the turbo to relay from a point and stop the existing fksc relayers.
+# 4. Later you can disable the fksc format style writes using singleDbWriteEnabled.
+#
+# removed configs:
+#   partitionConfiguration
+######################################################
+singleDbWriteEnabled: false               # write in fksc relayer format
+multiDbWriteEnabled: true                 # write in turbo relayer format
+turboOutboundWithoutTrxEnabled: false     # only write to turbo outbound table
+sharding: true                            # enables shard db writes based on queue_shard_strategy
+appDbType: "mysql"                        # {supports two values [mysql, tds]}
+queue_shard_strategy:
+  default_suffix: queues
+  clusters:
+    topics:                               # defines a shard to which client will write
+      - production\.fsd\.payment\.status  # This a regex pattern which will be matched against the exchange name passed
+
+    external:
+      - ekl_facilities_production
+
+    shipping:
+      - shipping_b2c_production
+      - ekl_fsd_shipping_production
+
+    internal:
+      - fsd_pos_reconciliation_production
+      - ekl_fsd_pos_reconciliation_production
+      - ekl_fsd_pos_reco_production
+      - ekl_fsd_pinelabs_production
+      - ekl_fsd_mobpine_production
+
+    sreh:
+      - ekl_fsd_sreh_production
+
+    comm:
+      - fsd_communication_queue_production
+      - ekl_communication_production
+
+# Note : Turbo Client doesn't depend on any specific provider(c3p0) and will compile successfully even if you exclude the provider dependency.
+# Make sure you are configuring your provider properly in case you are overriding the default provider.
+mysql:
+    hibernate.c3p0.idle_test_period: "60000"
+    hibernate.c3p0.max_size: "100"
+    hibernate.c3p0.max_statements: "50"
+    hibernate.c3p0.min_size: "20"
+    hibernate.c3p0.timeout: "300"
+    hibernate.connection.driver_class: com.mysql.jdbc.Driver
+    hibernate.connection.password: "" #root
+    hibernate.connection.url: "jdbc:mysql://localhost:3306/outbound"
+    hibernate.connection.username: root
+    hibernate.show_sql: "true"
+    hibernate.connection.zeroDateTimeBehavior: convertToNull
+
+db_shards:
+  shard1:
+      hibernate.c3p0.idle_test_period: "60000"
+      hibernate.c3p0.max_size: "100"
+      hibernate.c3p0.max_statements: "50"
+      hibernate.c3p0.min_size: "5"
+      hibernate.c3p0.timeout: "300"
+      hibernate.connection.driver_class: com.mysql.jdbc.Driver
+      hibernate.connection.password: "" #root
+      hibernate.connection.url: "jdbc:mysql://localhost:3306/outbound_shard1"
+      hibernate.connection.username: root
+      hibernate.show_sql: "true"
+      hibernate.connection.zeroDateTimeBehavior: convertToNull

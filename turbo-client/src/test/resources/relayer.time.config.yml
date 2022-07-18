@@ -1,0 +1,10 @@
+sharding: true
+sharding_strategy: mixed
+time_shard_strategy: daily
+queue_shard_strategy:
+  default_suffix: default
+  clusters:
+    queues:
+      - .*_staging
+    topics:
+      - .*\.status
