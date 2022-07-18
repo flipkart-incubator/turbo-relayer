@@ -8,11 +8,27 @@ Java client for Turbo relayer
 #### Dependency
 ```
         <dependency>
-            <groupId>com.flipkart.restbus.hibernate</groupId>
+            <groupId>com.flipkart.turborelayer</groupId>
             <artifactId>turbo-client</artifactId>
-            <version>{turbo-client-version}</version>
+            <version>2.4.0</version>
         </dependency>
    
+```
+
+#### Repository
+```
+    <repositories>
+        <repository>
+            <id>clojars</id>
+            <name>Clojars repository</name>
+            <url>https://clojars.org/repo</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+    </repositories>
 ```
 #### Usage
 - Initialize client by providing a [config file](https://github.fkinternal.com/Flipkart/turbo-client/blob/master/hibernate-restbus-client/sample_config.yml), details are given inline.
