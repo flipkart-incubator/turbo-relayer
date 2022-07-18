@@ -1,0 +1,210 @@
+#macro(defaultValue $parm $def)
+#if (!$!parm || $!parm == "")
+$def
+#else
+$parm
+#end
+#end
+
+#set ($relayerDef = "relayer.default.")
+#macro(relayerDefValue $map $key $defValue)
+#if ($map.get($key))
+$map.get($key)
+#elseif($keys.get("$relayerDef$key"))
+$keys.get("$relayerDef$key")
+#else
+$defValue
+#end
+#end
+
+#set ($mysqlDef = "mysql.default.")
+#macro(mysqlDefValue $map $key)
+#if ($map.get($key))
+$map.get($key)
+#else
+$keys.get("$mysqlDef$key")
+#end
+#end
+
+#set( $newline="" )
+
+hostName: localhost
+appUserName: $keys.get("app.username")
+appName: $keys.get("app.name")
+teamName: $keys.get("teamname")
+
+defaultVaridhiServer : $keys.get("default.varidhi.server")
+
+#if($keys.get("authConfig.clientId"))
+authConfig:
+#if($keys.get("authConfig.authnUrl"))
+  authnUrl: $keys.get("authConfig.authnUrl")
+#end
+#if($keys.get("authConfig.clientId"))
+  clientId: $keys.get("authConfig.clientId")
+#end
+#if($keys.get("authConfig.clientSecret"))
+  clientSecret: $keys.get("authConfig.clientSecret")
+#end
+#end
+
+partitionConfiguration:
+  mode: $keys.get("partition.configuration.mode")
+  size: $keys.get("partition.configuration.size")
+  noOfExtraPartitions: $keys.get("partition.configuration.noOfExtraPartitions")
+  noOfDaysToPreserve: $keys.get("partition.configuration.noOfDaysToPreserve")
+#if($keys.get("partition.configuration.noOfHoursToPreserve"))
+  noOfHoursToPreserve:  $keys.get("partition.configuration.noOfHoursToPreserve")
+#end
+  archivalPath: $keys.get("partition.configuration.archivalPath")
+  jobTime: $keys.get("partition.configuration.jobTime")
+  frequencyInHrs: $keys.get("partition.configuration.frequencyInHrs")
+#if($keys.get("partition.configuration.scheduleJobRetryTime"))
+  scheduleJobRetryTime: $keys.get("partition.configuration.scheduleJobRetryTime")
+#end
+#if($keys.get("partition.configuration.scheduleJobTries"))
+  scheduleJobTries: $keys.get("partition.configuration.scheduleJobTries")
+#end
+  archivalDestination: $keys.get("partition.configuration.archivalDestination")
+#if($keys.get("partition.configuration.monitorThreadSleepTime"))
+  monitorThreadSleepTime: $keys.get("partition.configuration.monitorThreadSleepTime")
+#end
+#if($keys.get("partition.configuration.deadlockQueryExecutionTime"))
+  deadlockQueryExecutionTime: $keys.get("partition.configuration.deadlockQueryExecutionTime")
+#end
+#if($keys.get("partition.configuration.cronSchedule"))
+  cronSchedule: "$keys.get("partition.configuration.cronSchedule")"
+#end
+#if($keys.get("partition.configuration.appPartitionDbRef.id"))
+  appPartitionDbRef:
+    id: $keys.get("partition.configuration.appPartitionDbRef.id")
+#end
+#if($keys.get("partition.configuration.appPartitionDbRef.type"))
+    type: $keys.get("partition.configuration.appPartitionDbRef.type")
+#end
+
+emailConfiguration:
+  smtpHost: "localhost"
+  fromAddress: $keys.get("email.configuration.fromAddress")
+  toAddress: $keys.get("email.configuration.toAddress")
+
+mockConfig:
+#if($keys.get("mockConfig.varadhiErrorPercent"))
+  varadhiErrorPercent: $keys.get("mockConfig.varadhiErrorPercent")
+#else
+  varadhiErrorPercent: 0.002
+#end
+#if($keys.get("mockConfig.varadhiAvgLatencyInMillis"))
+  varadhiAvgLatencyInMillis: $keys.get("mockConfig.varadhiAvgLatencyInMillis")
+#else
+  varadhiAvgLatencyInMillis: 300
+#end
+
+
+mysql:
+#set ($mapList = $keys.get("mysql") )
+#foreach( $map in $mapList )
+#set($mysql ="mysql.")
+#set($password =".password")
+#set($mysql_id = $map.get("id") )
+#set($mysql_password = "$mysql$mysql_id$password")
+  $mysql_id:
+    hibernate.c3p0.idle_test_period: #mysqlDefValue($map "c3p0_idle_test_period")
+    hibernate.c3p0.max_size: #mysqlDefValue($map "c3p0_max_size")
+    hibernate.c3p0.max_statements: #mysqlDefValue($map "c3p0_max_statements")
+    hibernate.c3p0.min_size: #mysqlDefValue($map "c3p0_min_size")
+    hibernate.c3p0.timeout: #mysqlDefValue($map "c3p0_timeout")
+    hibernate.connection.driver_class: #mysqlDefValue($map "driver_class")
+    hibernate.connection.password: #if($keys.get($mysql_password)) $keys.get($mysql_password)  #else $map.get("password") #end $newline
+    hibernate.connection.url: $map.get("url")
+    hibernate.connection.username: #mysqlDefValue($map "username")
+    hibernate.show_sql: #mysqlDefValue($map "show_sql")
+    hibernate.connection.zeroDateTimeBehavior: #mysqlDefValue($map "zeroDateTimeBehavior")
+#foreach ($e in $map.entrySet())
+#if($e.key.startsWith("hibernate."))
+    $e.key : $e.value
+#end
+#end
+#end
+
+hashingAlgorithm: $keys.get("hashing.algorithm")
+
+
+alertzEndpoint: #if($keys.get("alertzEndpoint")) $keys.get("alertzEndpoint") #else "http://10.47.0.149" #end
+
+defaultCreateAlert: #if($keys.get("default.createAlert")) $keys.get("default.createAlert") #else true #end
+
+metricCollectorSleepTimeInMs: #if($keys.get("metricCollectorSleepTimeInMs")) $keys.get("metricCollectorSleepTimeInMs") #else 2000 #end
+
+relayers:
+#set ($mapList = $keys.get("relayers") )
+#foreach( $map in $mapList )
+    - name: $map.get("name")
+#if($map.get("relayerId"))
+      relayerId: $map.get("relayerId")
+#end
+      active: $map.get("active")
+      readerMainQueueSize: #relayerDefValue($map "readerMainQueueSize" 20000)
+      readerBatchSize: #relayerDefValue($map "readerBatchSize" 10000)
+      readerParallelismDegree: #relayerDefValue($map "readerParallelismDegree" 10)
+      readerSleepTime: #relayerDefValue($map "readerSleepTime" 100)
+      processorParallelismDegree: #relayerDefValue($map "processorParallelismDegree" 53)
+      processorQueueSize: #relayerDefValue($map "processorQueueSize" 1000)
+      lastProcessedPersistInterval: #relayerDefValue($map "lastProcessedPersistInterval" 1000)
+      controlTaskDeletionJobTime: #relayerDefValue($map "controlTaskDeletionJobTime" "02:00:00")
+      controlTaskDeletionFrequencyInHrs: #relayerDefValue($map "controlTaskDeletionFrequencyInHrs" 24)
+      controlTaskDeletionBatchSize: #relayerDefValue($map "controlTaskDeletionBatchSize" 1000)
+      controlTaskKeepDataInDays: #relayerDefValue($map "controlTaskKeepDataInDays" 10)
+      maxApplicationTransactionTime: #relayerDefValue($map "maxApplicationTransactionTime" 1800000)
+      turboReadMode: #relayerDefValue($map "turboReadMode" "default")
+      enableCustomRelay: #relayerDefValue($map "enableCustomRelay" false)
+      ignoreSideliningOf4xxFailures: #relayerDefValue($map "ignoreSideliningOf4xxFailures" false)
+      ignoreSideliningOfNon4xxFailures: #relayerDefValue($map "ignoreSideliningOfNon4xxFailures" false)
+      leaderElectionEnabled: #relayerDefValue($map "leaderElectionEnabled" false)
+      leaderElectionPingInterval: #relayerDefValue($map "leaderElectionPingInterval" 10)
+      leaderElectionExpiryInterval: #relayerDefValue($map "leaderElectionExpiryInterval" 30)
+      delayedReadIntervalInSeconds: #relayerDefValue($map "delayedReadIntervalInSeconds" 0)
+      characterEncoding: #relayerDefValue($map "characterEncoding" "ISO-8859-1")
+
+#if($map.get("cronScheduleUnsideline"))
+      cronScheduleUnsideline: "$map.get("cronScheduleUnsideline")"
+#elseif($keys.get("cron.schedule.unsideline"))
+      cronScheduleUnsideline: "$keys.get("cron.schedule.unsideline")"
+#else
+      cronScheduleUnsideline: "10 * * * *"
+#end
+#if($map.get("varidhiServer"))
+      varidhiServer: $map.get("varidhiServer")
+#end
+#if($map.get("relayerAlertzConfig"))
+      relayerAlertzConfig: $map.get("relayerAlertzConfig")
+#end
+#if($map.get("createAlert"))
+      createAlert: $map.get("createAlert")
+#end
+#if($map.get("hashingAlgorithm"))
+      hashingAlgorithm: $map.get("hashingAlgorithm")
+#end
+      appDbRef:
+        type: $map.get("appDbRefType")
+        id: $map.get("appDbRefId")
+      outboundDbRef:
+        type: $map.get("outboundDbRefType")
+        id: $map.get("outboundDbRefId")
+      metricDbRef:
+        type: #defaultValue($map.get("metricDbRefType") $map.get("outboundDbRefType") )
+        id: #defaultValue($map.get("metricDbRefId") $map.get("outboundDbRefId") )
+#if($map.get("partitionConfiguration"))
+      partitionConfiguration:
+#foreach ($e in $map.get("partitionConfiguration").entrySet())
+#if($e.key.equalsIgnoreCase("appPartitionDbRef"))
+        appPartitionDbRef:
+          id: $e.value.get("id")
+          type: $e.value.get("type")
+#else
+        $e.key : "$e.value"
+#end
+#end
+#end
+
+#end

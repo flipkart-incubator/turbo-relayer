@@ -1,0 +1,52 @@
+/*
+ *
+ *  Copyright (c) 2022 [The original author]
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ * /
+ */
+
+package com.flipkart.varidhi.core;
+
+import com.flipkart.varidhi.relayer.Relayer;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+/*
+ * *
+ * Author: abhinavp
+ * Date: 14-Jul-2015
+ *
+ */
+public class MapRelayerContainer extends HashMap<String, Relayer>
+    implements RelayerHandleContainer {
+
+    @Override public Relayer getRelayerHandle(String namespace) {
+        return this.get(namespace);
+    }
+
+    public void addRelayerHandle(String key, Relayer relayer) {
+        this.put(key, relayer);
+    }
+
+    @Override public boolean isRelayerAvailable(String namespace) {
+        return this.containsKey(namespace);
+    }
+
+    @Override public List<Relayer> getAllRelayers() {
+        return new ArrayList<>(this.values());
+    }
+
+}

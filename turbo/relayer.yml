@@ -1,0 +1,165 @@
+hostName: localhost
+appUserName: varadhi
+appName: TR_APP
+teamName: EKL-E2E-SERVICES
+
+defaultDestinationServer : http://localhost
+
+partitionConfiguration:
+  mode: AUTO
+  size: 100000
+  noOfExtraPartitions: 5
+  noOfDaysToPreserve: 5
+  archivalPath: /tmp
+  jobTime: 17:00:00
+  frequencyInHrs: 24
+  scheduleJobRetryTime: 120000
+  scheduleJobTries: 5
+  archivalDestination: /tmp/rsync_test/
+  monitorThreadSleepTime: 5000
+  deadlockQueryExecutionTime: 30
+
+emailConfiguration:
+  smtpHost: "localhost"
+  fromAddress: abc@xyz.com
+  toAddress: abc@xyz.com
+
+mockConfig:
+  errorPercent: 0.002
+  avgLatencyInMillis: 300
+
+alertProviderConfig:
+  alertMethodName: "NONE"
+  alertProviderClass: ""
+
+httpAuthConfig:
+  httpAuthMethodName: "NONE"
+  httpAuthProviderClass: ""
+
+mysql:
+  app:
+    hibernate.c3p0.idle_test_period: 60000
+    hibernate.c3p0.max_size: 100
+    hibernate.c3p0.max_statements: 50
+    hibernate.c3p0.min_size: 1
+    hibernate.c3p0.timeout: 300
+    hibernate.connection.driver_class: com.mysql.jdbc.Driver
+    hibernate.connection.password: wrong_password
+    hibernate.connection.url: jdbc:mysql://localhost:3306/app
+    hibernate.connection.username: root
+    hibernate.show_sql: false
+    hibernate.connection.zeroDateTimeBehavior: convertToNull
+  outbound:
+    hibernate.c3p0.idle_test_period: 60000
+    hibernate.c3p0.max_size: 100
+    hibernate.c3p0.max_statements: 50
+    hibernate.c3p0.min_size: 1
+    hibernate.c3p0.timeout: 300
+    hibernate.connection.driver_class: com.mysql.jdbc.Driver
+    hibernate.connection.password: wrong_password
+    hibernate.connection.url: jdbc:mysql://localhost:3306/outbound
+    hibernate.connection.username: root
+    hibernate.show_sql: false
+    hibernate.connection.zeroDateTimeBehavior: convertToNull
+  partition:
+    hibernate.c3p0.idle_test_period: 60000
+    hibernate.c3p0.max_size: 100
+    hibernate.c3p0.max_statements: 50
+    hibernate.c3p0.min_size: 1
+    hibernate.c3p0.timeout: 300
+    hibernate.connection.driver_class: com.mysql.jdbc.Driver
+    hibernate.connection.password: wrong_password
+    hibernate.connection.url: jdbc:mysql://localhost:3306/app
+    hibernate.connection.username: root
+    hibernate.show_sql: false
+    hibernate.connection.zeroDateTimeBehavior: convertToNull
+
+hashingAlgorithm: JAVA_HASHCODE
+
+metricCollectorSleepTimeInMs:  4000
+relayers:
+    - name: topic
+      relayerId: topic-id1
+      active: true
+      readerMainQueueSize: 3000
+      readerBatchSize: 2000
+      readerParallelismDegree: 10
+      readerSleepTime: 100
+      processorParallelismDegree: 7
+      processorQueueSize: 1000
+      lastProcessedPersistInterval: 1000
+      controlTaskDeletionJobTime: 02:00:00
+      controlTaskDeletionFrequencyInHrs: 24
+      controlTaskDeletionBatchSize: 1000
+      controlTaskKeepDataInDays: 10
+      maxApplicationTransactionTime: 1800000
+      turboReadMode: SEQUENCE_READER
+      enableCustomRelay: false
+      ignoreSideliningOf4xxFailures: false
+      ignoreSideliningOfNon4xxFailures: false
+      leaderElectionEnabled: false
+      leaderElectionPingInterval: 10
+      leaderElectionExpiryInterval: 30
+      delayedReadIntervalInSeconds: 0
+      cronScheduleUnsideline: "*/40 * * * *"
+      destinationServer: http://10.10.10.10
+      appDbRef:
+        type: mysql
+        id: app
+      outboundDbRef:
+        type: mysql
+        id: outbound
+      metricDbRef:
+        type: mysql
+        id: outbound
+      partitionConfiguration:
+        mode : "AUTO"
+        size : "100000"
+        noOfHoursToPreserve : "1"
+        noOfExtraPartitions : "10"
+        frequencyInHrs: 10
+        jobTime : "03:17:00"
+        monitorThreadSleepTime : "5000"
+        appPartitionDbRef:
+          id: partition
+          type: mysql
+
+    - name: queue
+      relayerId: queue-id2
+      active: true
+      readerMainQueueSize: 4000
+      readerBatchSize: 10000
+      readerParallelismDegree: 10
+      readerSleepTime: 100
+      processorParallelismDegree: 7
+      processorQueueSize: 1000
+      lastProcessedPersistInterval: 1000
+      controlTaskDeletionJobTime: 02:00:00
+      controlTaskDeletionFrequencyInHrs: 24
+      controlTaskDeletionBatchSize: 1000
+      controlTaskKeepDataInDays: 10
+      maxApplicationTransactionTime: 1800000
+      turboReadMode: SEQUENCE_READER
+      enableCustomRelay: false
+      ignoreSideliningOf4xxFailures: false
+      ignoreSideliningOfNon4xxFailures: false
+      leaderElectionEnabled: true
+      leaderElectionPingInterval: 10
+      leaderElectionExpiryInterval: 30
+      delayedReadIntervalInSeconds: 0
+      cronScheduleUnsideline: "*/30 * * * *"
+      destinationServer: http://10.10.10.10
+      alertzConfig:
+          - unknownProperty: topic
+            pendingMessage: 100000
+          - severity: 1
+            rowsAvailability: 500000
+      appDbRef:
+        type: mysql
+        id: app
+      outboundDbRef:
+        type: mysql
+        id: outbound
+      metricDbRef:
+        type: mysql
+        id: outbound

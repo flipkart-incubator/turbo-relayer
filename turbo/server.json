@@ -1,0 +1,141 @@
+{
+  "metadata": {
+    "name": "turbo-ch",
+    "version": 14,
+    "lastUpdated": 1575303333797,
+    "changelog": null
+  },
+  "keys": {
+    "alertzConfigSample": [
+      {
+        "pendingMessage": 5000,
+        "sidelinedMessages": 10,
+        "sidelinedGroups": 10,
+        "rowsAvailability": 500000
+      }
+    ],
+    "partition.configuration.archivalDestination": "/tmp/rsync_test/",
+    "partition.configuration.deadlockQueryExecutionTime": 30,
+    "partition.configuration.monitorThreadSleepTime": 5000,
+    "partition.configuration.mode": "AUTO",
+    "partition.configuration.scheduleJobRetryTime": 120000,
+    "partition.configuration.noOfDaysToPreserve": 5,
+    "partition.configuration.jobTime": "17:00:00",
+    "alertzEndpoint": "http://10.47.0.149",
+    "relayer.default.readerMainQueueSize": 4000,
+    "relayer.default.readerBatchSize": 2000,
+    "mysql.default.c3p0_idle_test_period": "60000",
+    "mysql.default.driver_class": "com.mysql.jdbc.Driver",
+    "mysql.default.zeroDateTimeBehavior": "convertToNull",
+    "mysql": [
+      {
+        "id": "app",
+        "c3p0_max_size": "100",
+        "c3p0_max_statements": "50",
+        "c3p0_min_size": "1",
+        "c3p0_timeout": "300",
+        "password": "",
+        "url": "jdbc:mysql://localhost:3306/app",
+        "username": "root",
+        "show_sql": "false",
+        "hibernate.c3p0.max_size": "50"
+      },
+      {
+        "id": "outbound",
+        "c3p0_idle_test_period": "60000",
+        "c3p0_max_size": "100",
+        "c3p0_max_statements": "50",
+        "c3p0_min_size": "1",
+        "c3p0_timeout": "300",
+        "driver_class": "com.mysql.jdbc.Driver",
+        "password": "",
+        "url": "jdbc:mysql://localhost:3306/outbound",
+        "username": "root",
+        "show_sql": "false",
+        "zeroDateTimeBehavior": "convertToNull"
+      },
+      {
+        "id": "partition",
+        "c3p0_idle_test_period": "60000",
+        "c3p0_max_size": "100",
+        "c3p0_max_statements": "50",
+        "c3p0_min_size": "1",
+        "c3p0_timeout": "300",
+        "driver_class": "com.mysql.jdbc.Driver",
+        "password": "",
+        "url": "jdbc:mysql://localhost:3306/app",
+        "username": "root",
+        "show_sql": "false",
+        "zeroDateTimeBehavior": "convertToNull"
+      }
+    ],
+    "default.varidhi.server": "http://localhost",
+    "partition.configuration.noOfExtraPartitions": 5,
+    "hashing.algorithm": "JAVA_HASHCODE",
+    "cron.schedule.unsideline" : "*/40 * * * *",
+    "relayers": [
+      {
+        "relayerId": "topic-id1",
+        "name": "topic",
+        "active": true,
+        "readerMainQueueSize": 3000,
+        "readerSleepTime": 100,
+        "processorParallelismDegree": 7,
+        "processorQueueSize": 1000,
+        "lastProcessedPersistInterval": 1000,
+        "maxApplicationTransactionTime": "1800000",
+        "varidhiServer": "http://10.24.2.197",
+        "appDbRefType": "mysql",
+        "appDbRefId": "app",
+        "outboundDbRefType": "mysql",
+        "outboundDbRefId": "outbound",
+        "partitionConfiguration": {
+          "mode": "AUTO",
+          "size": 100000,
+          "noOfDaysToPreserve": 5,
+          "noOfExtraPartitions": 10,
+          "jobTime": "03:17:00",
+          "monitorThreadSleepTime": 5000,
+          "appPartitionDbRef": {
+            "id": "partition",
+            "type": "mysql"
+          }
+        }
+      },
+      {
+        "relayerId": "queue-id2",
+        "name": "queue",
+        "active": true,
+        "readerBatchSize": 10000,
+        "readerParallelismDegree": 10,
+        "readerSleepTime": 100,
+        "processorParallelismDegree": 7,
+        "processorQueueSize": 1000,
+        "lastProcessedPersistInterval": 1000,
+        "maxApplicationTransactionTime": "1800000",
+        "varidhiServer": "http://10.24.2.197",
+        "leaderElectionEnabled" : true,
+        "leaderElectionPingInterval": 10,
+        "leaderElectionExpiryInterval": 30,
+        "appDbRefType": "mysql",
+        "appDbRefId": "app",
+        "outboundDbRefType": "mysql",
+        "outboundDbRefId": "outbound",
+        "cronScheduleUnsideline":"*/30 * * * *",
+        "alertzConfig": "alertzConfigSample"
+      }
+    ],
+    "metricCollectorSleepTimeInMs": 4000,
+    "logging.level": "INFO",
+    "partition.configuration.frequencyInHrs": "24",
+    "email.configuration.toAddress": "tr-dev@flipkart.com",
+    "partition.configuration.archivalPath": "/tmp",
+    "partition.configuration.size": 100000,
+    "app.name": "TR_APP",
+    "email.configuration.fromAddress": "tr-dev@flipkart.com",
+    "logging.loggers.relaying.level": "INFO",
+    "partition.configuration.scheduleJobTries": 5,
+    "app.username": "varadhi",
+    "teamname": "EKL-E2E-SERVICES"
+  }
+}

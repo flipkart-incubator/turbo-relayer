@@ -1,0 +1,27 @@
+server:
+  applicationContextPath: /
+  applicationConnectors:
+    - type: http
+      port: 36005  # don't change this
+
+  adminConnectors:
+    - type: http
+      port: 36006  # don't change this
+
+logging:
+  level: INFO
+  loggers:
+    "relayingMessageLogger":
+      level: INFO
+      additive: false
+      appenders:
+        - type: console
+          threshold: ALL
+          logFormat: "%level{6} [%date] [%thread] [%logger{5}]: %message%n"
+          timeZone: IST
+    "com.flipkart.varidhi": INFO
+  appenders:
+    - type: console
+      threshold: ALL
+      logFormat: "%level{6} [%date] [%thread] [%logger{5}]: %message%n"
+      timeZone: IST

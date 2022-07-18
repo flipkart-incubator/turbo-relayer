@@ -1,0 +1,80 @@
+hostName: localhost
+appUserName: varadhi #Will be used as default value for X_RESTBUS_USER header
+appName: TR_SRMS
+teamName: team
+mysql:
+  app:
+    hibernate.c3p0.idle_test_period: "60000"
+    hibernate.c3p0.max_size: "10"
+    hibernate.c3p0.max_statements: "5"
+    hibernate.c3p0.min_size: "1"
+    hibernate.c3p0.timeout: "300"
+    hibernate.connection.driver_class: com.mysql.jdbc.Driver
+    hibernate.connection.password: "test"
+    hibernate.connection.url: "jdbc:mysql://localhost:3344/app"
+    hibernate.connection.username: test
+    hibernate.show_sql: "false"
+    hibernate.connection.zeroDateTimeBehavior: convertToNull
+    slave_hostname: localhost
+  outbound:
+    hibernate.c3p0.idle_test_period: "60000"
+    hibernate.c3p0.max_size: "10"
+    hibernate.c3p0.max_statements: "5"
+    hibernate.c3p0.min_size: "1"
+    hibernate.c3p0.timeout: "300"
+    hibernate.connection.driver_class: com.mysql.jdbc.Driver
+    hibernate.connection.password: "test"
+    hibernate.connection.url: "jdbc:mysql://localhost:3344/outbound"
+    hibernate.connection.username: test
+    hibernate.show_sql: "false"
+    hibernate.connection.zeroDateTimeBehavior: convertToNull
+    slave_hostname: localhost
+
+defaultDestinationServer : "http://10.10.10.10"
+
+partitionConfiguration:
+  #doPartition: false
+  #doArchival: true
+  #dryRun: false
+  mode: AUTO
+  size: 100000 #Partition size as no. of rows.
+  noOfDaysToPreserve: 5 #Partition will get archived these many days after the max(created_at) of the partition. Last non empty partition will never be archived
+  noOfExtraPartitions: 30 #These many empty partitions for future data will be present
+  jobTime: "17:00:00" #hh:mm:SS
+  frequencyInHrs: 24
+  scheduleJobRetryTime : 120000 #Denotes the time in milliseconds after which the Partition Creation/Archival Job Retries if it gets killed.Defaults to 120000 milliseconds.
+  scheduleJobTries : 5 #Denotes the number of tries that the Partition Creation/Archival Job will take if its being killed by Monitor Deadlock Thread.Defaults to 5 tries.
+  archivalPath: /tmp
+  archivalDestination: /tmp/rsync_test/ #fkl-shipping18::ekl-turbo-app1/
+  monitorThreadSleepTime: 200 # [optional: default:5000]
+  deadlockQueryExecutionTime: 5 # [optional: default: 30]
+
+emailConfiguration:
+  smtpHost: localhost
+  fromAddress: gurpreetmm@gmail.com
+  toAddress: gurpreet.makkar@flipkart.com #kalyan.akella@flipkart.com,sumit.pilankar@flipkart.com,gurpreetmm@gmail.com
+
+relayers:
+    - name: test
+      active: true
+      hashingAlgorithm: JAVA_HASHCODE
+      readerMainQueueSize: 20000     # Queue size in which reader puts the messages.[optional]
+      readerBatchSize: 10000         # How many messages to fetch in a single iteration.[optional]
+      readerParallelismDegree: 10    # While reading how many threads to spawn.[optional]
+      readerSleepTime: 100           # In milliseconds. Sleep Reader Thread, If no messages Exists. Default 100ms.[optional]
+      processorParallelismDegree: 7  # Number of subProcessors / Consumers.[optional]
+      processorQueueSize: 1000       # Number of messages per subProcessor/Consumer.[optional]
+      lastProcessedPersistInterval: 1000 #in milliseconds.[optional]
+      maxApplicationTransactionTime: 1800000 # Denotes the time in milliseconds for reading skippedIds,this is equivalent to MaxApplicationtransaction time.[optional]
+      destinationServer: "http://10.10.10.10/"
+      createAlert: false
+      appDbRef:
+            type: "mysql"
+            id: "app"
+      outboundDbRef:
+            type: "mysql"
+            id: "outbound"
+
+
+hashingAlgorithm: JAVA_HASHCODE
+
